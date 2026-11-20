@@ -1,9 +1,9 @@
 # AlphaAlgebra: Technical Specification
 
-**Status:** Initial design specification  
+**Status:** Initial implementation — typed core foundation  
 **Project:** AlphaAlgebra  
 **Repository origin:** `google-deepmind/alphageometry`  
-**Implementation status:** No algebra engine or training pipeline is claimed to exist yet.
+**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, and relation types are implemented with unit tests. No transformation kernel, parser, verifier, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
 
 ## 1. Purpose
 
@@ -205,11 +205,13 @@ Report denominators, timeout policy, hardware, software versions, random seeds, 
 
 ### M1 — Formal algebra core
 
-- Define AST nodes and typed symbols.
-- Define assumptions, domains, and side conditions.
-- Add parser/renderer round-trip tests for the supported subset.
+- Define immutable AST nodes for exact rational constants, symbols, sums, products, and powers.
+- Define explicit number-domain labels and symbol assumptions.
+- Define typed equality and order relations.
+- Add unit tests for construction invariants and invalid inputs.
+- Parser/renderer round-trip tests remain a follow-up task; no parser is included in this foundation.
 
-**Acceptance:** supported expressions parse into structured nodes and round-trip without losing declared conditions.
+**Acceptance for this initial slice:** supported nodes enforce their basic type and construction invariants, and exact rational constants do not pass through floating-point representations.
 
 ### M2 — Symbolic rule kernel
 
@@ -282,6 +284,6 @@ Open decisions for implementation include the Python version and packaging layou
 
 ## 11. Current status
 
-This document is a design specification. It does not claim that the AST, rule kernel, verifier, search engine, dataset, model, or training pipeline has been implemented or evaluated.
+The initial M1 foundation now contains immutable nodes for rational constants, symbols, sums, products, and powers; explicit domain labels; symbol assumptions; and typed equations and inequalities. Unit tests cover basic construction invariants. These components are data structures only: they do not simplify expressions, apply algebraic transformations, establish equivalence, or prove the truth of assumptions.
 
-The next implementation task is **M1: define the minimal typed AST, domain/assumption model, and tests**. The geometry code should remain untouched during that work.
+The transformation kernel, parser/renderer, independent verifier, search engine, dataset, model, and training pipeline remain unimplemented and unevaluated. The next task is to specify and test the semantics of a small set of symbolic transformations. The geometry implementation remains untouched.
