@@ -1,6 +1,6 @@
 # Upstream AlphaGeometry README (archived)
 
-This file preserves the original repository README as it appeared before the AlphaAlgebra project-identity update. It is retained for provenance and reference; it is not the current project guide.
+This is an abridged archival reference to the inherited AlphaGeometry README, retained for provenance and orientation. It is not a verbatim copy and is not the current project guide. The original README remains available in the repository's earlier Git history.
 
 ---
 
