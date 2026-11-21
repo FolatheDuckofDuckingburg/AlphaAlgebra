@@ -1,0 +1,24 @@
+name: AlphaAlgebra tests
+
+on:
+  push:
+    paths:
+      - "alphaalgebra/**"
+      - ".github/workflows/alphaalgebra-tests.yml"
+  pull_request:
+    paths:
+      - "alphaalgebra/**"
+      - ".github/workflows/alphaalgebra-tests.yml"
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run AlphaAlgebra unit tests
+        run: python -m unittest discover -s alphaalgebra/tests -v

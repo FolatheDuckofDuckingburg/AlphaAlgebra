@@ -4,7 +4,7 @@
 
 AlphaAlgebra explores how explicit mathematical representations, symbolic transformations, and independently checkable proof steps can support algebra problem solving. The initial target is olympiad-style algebra, developed incrementally from a small, testable formal core.
 
-> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. This branch adds the first algebra-domain and expression-model foundations, plus exact sparse polynomial normalization for the supported polynomial fragment. It does not yet contain an algebra solver, proof search, verifier, trained model, or reported solving results.
+> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. This branch adds the first algebra-domain and expression-model foundations, plus exact sparse polynomial normalization and one narrowly scoped, equivalence-preserving polynomial-equation normalization rule. A recomputation checker covers that rule only; this is not a general proof verifier. The project does not yet contain an algebra solver, proof search, trained model, or reported solving results.
 
 ## Relationship to AlphaGeometry
 
@@ -49,14 +49,21 @@ alphaalgebra/
     assumptions.py
     ast.py
     domains.py
+    polynomial.py
     relations.py
+    transformations.py
   tests/
     test_assumptions.py
     test_ast.py
     test_relations.py
+    test_polynomial.py
+    test_transformations.py
 docs/
   ALPHAALGEBRA_SPEC.md
   UPSTREAM_ALPHA_GEOMETRY_README.md
+.github/
+  workflows/
+    alphaalgebra-tests.yml
 ```
 
 The original geometry implementation remains in the repository root for provenance and reference. The AlphaAlgebra package is kept separate from those geometry modules.
@@ -71,7 +78,7 @@ Run the foundation tests from the repository root:
 python -m unittest discover -s alphaalgebra/tests -v
 ```
 
-The tests exercise data-model invariants and exact polynomial normalization. Passing them does not establish theorem-proving capability.
+The tests exercise data-model invariants, exact polynomial normalization, and the initial polynomial-equation normal-form rule. Passing them does not establish general theorem-proving capability.
 
 ## Roadmap
 
