@@ -37,6 +37,11 @@ class PolynomialEquationNormalizationTests(unittest.TestCase):
         result = normalize_polynomial_equation(Equation(left, right))
         self.assertEqual(result.residual, Polynomial.constant(0))
 
+    def test_equal_exact_constants_normalize_to_zero(self):
+        equation = Equation(Rational(Fraction(2, 3)), Rational(Fraction(4, 6)))
+        result = normalize_polynomial_equation(equation)
+        self.assertEqual(result.residual, Polynomial.constant(0))
+
     def test_rule_metadata_is_explicit(self):
         result = normalize_polynomial_equation(Equation(self.x, self.y))
         self.assertEqual(result.rule_name, RULE_POLYNOMIAL_EQUATION_TO_ZERO)
