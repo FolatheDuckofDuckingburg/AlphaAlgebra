@@ -80,7 +80,7 @@ class Polynomial:
     def variable(cls, name: str) -> "Polynomial":
         if not isinstance(name, str) or not name.strip():
             raise ValueError("variable name must be a non-empty string")
-        return cls((((name, 1),), Fraction(1)))
+        return cls(((((name, 1),), Fraction(1)),))
 
     def __add__(self, other: "Polynomial") -> "Polynomial":
         if not isinstance(other, Polynomial):
