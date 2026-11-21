@@ -3,7 +3,7 @@
 **Status:** Initial implementation — typed core foundation  
 **Project:** AlphaAlgebra  
 **Repository origin:** `google-deepmind/alphageometry`  
-**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, and relation types are implemented with unit tests. No transformation kernel, parser, verifier, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
+**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, relation types, and an exact sparse polynomial normalizer are implemented with unit tests. No general transformation-rule kernel, parser, independent verifier, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
 
 ## 1. Purpose
 
