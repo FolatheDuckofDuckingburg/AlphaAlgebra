@@ -3,7 +3,7 @@
 **Status:** Initial implementation — typed core foundation  
 **Project:** AlphaAlgebra  
 **Repository origin:** `google-deepmind/alphageometry`  
-**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, relation types, and an exact sparse polynomial normalizer are implemented with unit tests. No general transformation-rule kernel, parser, independent verifier, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
+**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, relation types, an exact sparse polynomial normalizer, and one explicit polynomial-equation normalization rule are implemented. A narrow checker recomputes that rule's output; it is not a general proof verifier. No parser, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
 
 ## 1. Purpose
 
@@ -215,11 +215,13 @@ Report denominators, timeout policy, hardware, software versions, random seeds, 
 
 ### M2 — Symbolic rule kernel
 
-- Implement a small set of explicit transformations.
-- Give every rule preconditions and tests.
-- Record proof-state transitions.
+- [x] Implement the initial rule converting a polynomial equation L = R into the equivalent normal form L - R = 0.
+- [x] Give the rule an explicit name and record its equivalence semantics and empty side-condition set.
+- [x] Add a narrow checker that recomputes the normalized residual and rejects tampered results.
+- [ ] Expand to additional rules only after their preconditions and semantics are specified.
+- [ ] Record general proof-state transitions.
 
-**Acceptance:** each supported rule has positive and negative tests, including boundary cases.
+**Acceptance for the initial slice:** positive, negative, tampering, and unsupported-expression tests are present. This does not satisfy the milestone for a complete rule kernel.
 
 ### M3 — Independent verification
 
@@ -284,6 +286,8 @@ Open decisions for implementation include the Python version and packaging layou
 
 ## 11. Current status
 
-The initial M1 foundation now contains immutable nodes for rational constants, symbols, sums, products, and powers; explicit domain labels; symbol assumptions; and typed equations and inequalities. Unit tests cover basic construction invariants. These components are data structures only: they do not simplify expressions, apply algebraic transformations, establish equivalence, or prove the truth of assumptions.
+The M1 foundation contains immutable nodes for rational constants, symbols, sums, products, and powers; explicit domain labels; symbol assumptions; and typed equations and inequalities. Exact sparse polynomial normalization expands and collects the supported polynomial fragment.
 
-The transformation kernel, parser/renderer, independent verifier, search engine, dataset, model, and training pipeline remain unimplemented and unevaluated. The next task is to specify and test the semantics of a small set of symbolic transformations. The geometry implementation remains untouched.
+The first M2 rule converts an equation L = R into L - R = 0 and labels the step as equivalence-preserving with no side conditions. Its checker independently recomputes the residual and detects a tampered result. This is a narrow normal-form checker, not a general proof verifier; it does not validate arbitrary transformations or prove the truth of assumptions. The rule performs no division, cancellation, factor removal, or solving.
+
+The parser/renderer, general rule kernel, proof-state search, independent general-purpose verifier, dataset, model, and training pipeline remain unimplemented and unevaluated. The geometry implementation remains untouched.

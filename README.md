@@ -4,7 +4,7 @@
 
 AlphaAlgebra explores how explicit mathematical representations, symbolic transformations, and independently checkable proof steps can support algebra problem solving. The initial target is olympiad-style algebra, developed incrementally from a small, testable formal core.
 
-> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. This branch adds the first algebra-domain and expression-model foundations, plus exact sparse polynomial normalization for the supported polynomial fragment. It does not yet contain an algebra solver, proof search, verifier, trained model, or reported solving results.
+> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. This branch adds the first algebra-domain and expression-model foundations, plus exact sparse polynomial normalization and one equivalence-preserving polynomial-equation normalization rule with a narrow recomputation checker. It does not yet contain a general proof verifier, algebra solver, proof search, trained model, or reported solving results.
 
 ## Relationship to AlphaGeometry
 
@@ -33,9 +33,9 @@ The first priority is a reliable symbolic foundation. Neural guidance is optiona
 
 ## Current scope
 
-The formal core supports exact rational constants, symbolic variables, arithmetic expression trees, explicit mathematical domains and assumptions, and equations and order relations. An initial exact sparse polynomial representation can expand and collect expressions built from these nodes using non-negative integer powers.
+The formal core supports exact rational constants, symbolic variables, arithmetic expression trees, explicit mathematical domains and assumptions, and equations and order relations. Exact sparse polynomial normalization expands and collects supported expressions using non-negative integer powers. One explicit equation rule converts L = R into the equivalent normal form L - R = 0; a narrow checker independently recomputes that normalization.
 
-Later milestones may add polynomial normalization, factorization, equation solving, inequality transformations, proof traces, verification, and bounded search. These are plans, not claims about current functionality.
+Later milestones may add additional transformation rules, factorization, equation solving, inequality transformations, general proof traces, verification, and bounded search. These are plans, not claims about current functionality.
 
 Out of scope for the initial foundation are a general-purpose computer algebra system, unrestricted theorem proving, and unchecked neural generation of proofs.
 
@@ -49,11 +49,13 @@ alphaalgebra/
     assumptions.py
     ast.py
     domains.py
+    polynomial.py
     relations.py
+    transformations.py
   tests/
     test_assumptions.py
     test_ast.py
-    test_relations.py
+    test_relations.py\n    test_polynomial.py\n    test_transformations.py
 docs/
   ALPHAALGEBRA_SPEC.md
   UPSTREAM_ALPHA_GEOMETRY_README.md
@@ -71,12 +73,12 @@ Run the foundation tests from the repository root:
 python -m unittest discover -s alphaalgebra/tests -v
 ```
 
-The tests exercise data-model invariants and exact polynomial normalization. Passing them does not establish theorem-proving capability.
+The tests exercise data-model invariants, exact polynomial normalization, and the single polynomial-equation normal-form rule. Passing them does not establish general theorem-proving capability.
 
 ## Roadmap
 
 1. **Formal core:** typed expressions, domains, assumptions, and relations.
-2. **Transformation kernel:** explicit rewrite rules with preconditions and side conditions.
+2. **Transformation kernel:** expand from the initial polynomial-equation normal-form rule to explicit rewrite rules with preconditions and side conditions.
 3. **Proof representation and verifier:** independently check each transformation and preserve constraints.
 4. **Symbolic baseline:** bounded, deterministic search with measurable resource limits.
 5. **Dataset and evaluation:** trace provenance, prevent template leakage, and report failures as well as successes.
