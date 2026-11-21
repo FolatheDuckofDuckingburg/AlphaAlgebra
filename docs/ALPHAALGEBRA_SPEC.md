@@ -3,7 +3,7 @@
 **Status:** Initial implementation — typed core foundation  
 **Project:** AlphaAlgebra  
 **Repository origin:** `google-deepmind/alphageometry`  
-**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, relation types, and an exact sparse polynomial normalizer are implemented with unit tests. No general transformation-rule kernel, parser, independent verifier, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
+**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, relation types, an exact sparse polynomial normalizer, and one explicit polynomial-equation normalization rule are implemented. A narrow checker recomputes that rule's output; it is not a general proof verifier. No parser, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
 
 ## 1. Purpose
 
