@@ -4,7 +4,7 @@
 
 AlphaAlgebra explores how explicit mathematical representations, symbolic transformations, and independently checkable proof steps can support algebra problem solving. The initial target is olympiad-style algebra, developed incrementally from a small, testable formal core.
 
-> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. This branch adds the first algebra-domain and expression-model foundations. It does not yet contain an algebra solver, proof search, verifier, trained model, or reported solving results.
+> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. This branch adds the first algebra-domain and expression-model foundations, plus exact sparse polynomial normalization for the supported polynomial fragment. It does not yet contain an algebra solver, proof search, verifier, trained model, or reported solving results.
 
 ## Relationship to AlphaGeometry
 
@@ -33,7 +33,7 @@ The first priority is a reliable symbolic foundation. Neural guidance is optiona
 
 ## Current scope
 
-The first formal core is intended to support exact rational constants, symbolic variables, arithmetic expression trees, explicit mathematical domains and assumptions, and equations and order relations.
+The formal core supports exact rational constants, symbolic variables, arithmetic expression trees, explicit mathematical domains and assumptions, and equations and order relations. An initial exact sparse polynomial representation can expand and collect expressions built from these nodes using non-negative integer powers.
 
 Later milestones may add polynomial normalization, factorization, equation solving, inequality transformations, proof traces, verification, and bounded search. These are plans, not claims about current functionality.
 
@@ -71,7 +71,7 @@ Run the foundation tests from the repository root:
 python -m unittest discover -s alphaalgebra/tests -v
 ```
 
-The tests exercise data-model invariants only. Passing them does not establish theorem-proving capability.
+The tests exercise data-model invariants and exact polynomial normalization. Passing them does not establish theorem-proving capability.
 
 ## Roadmap
 

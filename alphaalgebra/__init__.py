@@ -2,11 +2,13 @@
 
 from .core import (
     Add, Assumptions, Domain, Equation, GreaterEqual, GreaterThan,
-    LessEqual, LessThan, Multiply, Power, Rational, Symbol,
+    LessEqual, LessThan, Multiply, Polynomial, Power, Rational, Symbol,
+    UnsupportedPolynomialExpression, polynomial_from_expr,
 )
 
 __all__ = [
     "Add", "Assumptions", "Domain", "Equation", "GreaterEqual",
-    "GreaterThan", "LessEqual", "LessThan", "Multiply", "Power",
-    "Rational", "Symbol",
+    "GreaterThan", "LessEqual", "Multiply", "Polynomial", "Power",
+    "Rational", "Symbol", "UnsupportedPolynomialExpression",
+    "polynomial_from_expr",
 ]
