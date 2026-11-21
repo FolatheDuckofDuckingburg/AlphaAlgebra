@@ -35,7 +35,7 @@ The first priority is a reliable symbolic foundation. Neural guidance is optiona
 
 The formal core supports exact rational constants, symbolic variables, arithmetic expression trees, explicit mathematical domains and assumptions, and equations and order relations. Exact sparse polynomial normalization expands and collects supported expressions using non-negative integer powers. One explicit equation rule converts L = R into the equivalent normal form L - R = 0; a narrow checker independently recomputes that normalization.
 
-Later milestones may add polynomial normalization, factorization, equation solving, inequality transformations, proof traces, verification, and bounded search. These are plans, not claims about current functionality.
+Later milestones may add additional transformation rules, factorization, equation solving, inequality transformations, general proof traces, verification, and bounded search. These are plans, not claims about current functionality.
 
 Out of scope for the initial foundation are a general-purpose computer algebra system, unrestricted theorem proving, and unchecked neural generation of proofs.
 
@@ -49,7 +49,9 @@ alphaalgebra/
     assumptions.py
     ast.py
     domains.py
+    polynomial.py
     relations.py
+    transformations.py
   tests/
     test_assumptions.py
     test_ast.py
