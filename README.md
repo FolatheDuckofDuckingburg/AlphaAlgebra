@@ -49,14 +49,21 @@ alphaalgebra/
     assumptions.py
     ast.py
     domains.py
+    polynomial.py
     relations.py
+    transformations.py
   tests/
     test_assumptions.py
     test_ast.py
     test_relations.py
+    test_polynomial.py
+    test_transformations.py
 docs/
   ALPHAALGEBRA_SPEC.md
   UPSTREAM_ALPHA_GEOMETRY_README.md
+.github/
+  workflows/
+    alphaalgebra-tests.yml
 ```
 
 The original geometry implementation remains in the repository root for provenance and reference. The AlphaAlgebra package is kept separate from those geometry modules.
