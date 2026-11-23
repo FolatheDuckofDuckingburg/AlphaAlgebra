@@ -4,7 +4,7 @@
 
 AlphaAlgebra explores how explicit mathematical representations, symbolic transformations, and independently checkable proof steps can support algebra problem solving. The initial target is olympiad-style algebra, developed incrementally from a small, testable formal core.
 
-> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. This branch adds the first algebra-domain and expression-model foundations, plus exact sparse polynomial normalization and one narrowly scoped, equivalence-preserving polynomial-equation normalization rule. A recomputation checker covers that rule only; this is not a general proof verifier. The project does not yet contain an algebra solver, proof search, trained model, or reported solving results.
+> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. The AlphaAlgebra package includes typed expression and relation models, assumptions, exact sparse polynomial normalization, one narrowly scoped polynomial-equation normalization rule, and immutable proof-state/transition records. The existing recomputation checker covers that normalization rule only; the new transition records are descriptive data structures, not a general proof verifier. The project does not yet contain an algebra solver, proof search, trained model, or reported solving results.
 
 ## Relationship to AlphaGeometry
 
@@ -33,9 +33,9 @@ The first priority is a reliable symbolic foundation. Neural guidance is optiona
 
 ## Current scope
 
-The formal core supports exact rational constants, symbolic variables, arithmetic expression trees, explicit mathematical domains and assumptions, and equations and order relations. An initial exact sparse polynomial representation can expand and collect expressions built from these nodes using non-negative integer powers.
+The formal core supports exact rational constants, symbolic variables, arithmetic expression trees, explicit mathematical domains and assumptions, equations and order relations, and immutable proof-state/transition records. An initial exact sparse polynomial representation can expand and collect expressions built from these nodes using non-negative integer powers.
 
-Later milestones may add polynomial normalization, factorization, equation solving, inequality transformations, proof traces, verification, and bounded search. These are plans, not claims about current functionality.
+The proof-state records distinguish equivalence from forward and reverse implication at the metadata level. They do not yet establish those relationships, interpret side-condition strings, or verify arbitrary transitions.
 
 Out of scope for the initial foundation are a general-purpose computer algebra system, unrestricted theorem proving, and unchecked neural generation of proofs.
 
@@ -50,6 +50,7 @@ alphaalgebra/
     ast.py
     domains.py
     polynomial.py
+    proof_state.py
     relations.py
     transformations.py
   tests/
@@ -57,6 +58,7 @@ alphaalgebra/
     test_ast.py
     test_relations.py
     test_polynomial.py
+    test_proof_state.py
     test_transformations.py
 docs/
   ALPHAALGEBRA_SPEC.md
@@ -93,7 +95,7 @@ See [the technical specification](docs/ALPHAALGEBRA_SPEC.md) for the research qu
 
 ## Provenance and licensing
 
-The inherited AlphaGeometry files retain their original notices and licensing terms. AlphaGeometry software is distributed under Apache-2.0; other upstream materials may have separate terms, including CC BY 4.0. See the repository's LICENSE and the archived [upstream README](docs/UPSTREAM_ALPHA_GEOMETRY_README.md).
+The inherited AlphaGeometry files retain their original notices and licensing terms. AlphaGeometry software is distributed under Apache-2.0; other upstream materials may have separate terms, including CC BY 4.0. See the repository's LICENSE and the archived upstream README in the repository history.
 
 New AlphaAlgebra code in this contribution is provided under Apache-2.0, consistent with the repository's software licensing. Preserve upstream copyright and attribution notices when modifying or redistributing inherited files.
 
