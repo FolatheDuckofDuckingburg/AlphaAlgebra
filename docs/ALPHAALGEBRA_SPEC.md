@@ -1,9 +1,9 @@
 # AlphaAlgebra: Technical Specification
 
-**Status:** Initial implementation — typed core foundation  
+**Status:** Initial implementation — typed core and transition-record foundation  
 **Project:** AlphaAlgebra  
 **Repository origin:** `google-deepmind/alphageometry`  
-**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, relation types, and an exact sparse polynomial normalizer and one explicit polynomial-equation normalization rule are implemented. A narrow checker recomputes that rule's output; it is not a general proof verifier. No parser, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
+**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, relation types, exact sparse polynomial normalization, one explicit polynomial-equation normalization rule, and immutable proof-state/transition records are implemented. A narrow checker recomputes the polynomial normalization rule only; it is not a general proof verifier. No parser, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
 
 ## 1. Purpose
 
@@ -48,8 +48,6 @@ Subquestions:
 - Advanced abstract algebra (groups, rings, fields, ideals, modules)
 - Geometry-specific constructions and deduction rules
 - Neural generation of unchecked proof steps as an authority
-
-The scope may expand only when the existing domain has tests, documented semantics, and measurable performance.
 
 ## 4. Design principles
 
@@ -218,18 +216,20 @@ Report denominators, timeout policy, hardware, software versions, random seeds, 
 - [x] Implement the initial rule converting a polynomial equation L = R into the equivalent normal form L - R = 0.
 - [x] Give the rule an explicit name and record its equivalence semantics and empty side-condition set.
 - [x] Add a narrow checker that recomputes the normalized residual and rejects tampered results.
+- [x] Add immutable proof-state and transformation-step records with explicit rule IDs, side-condition metadata, and equivalence/implication direction labels.
+- [ ] Connect rule applications to the general transition record.
+- [ ] Verify transition semantics and side conditions independently.
 - [ ] Expand to additional rules only after their preconditions and semantics are specified.
-- [ ] Record general proof-state transitions.
 
-**Acceptance for the initial slice:** positive, negative, tampering, wrong-input, and unsupported-expression tests are present. This does not satisfy the milestone for a complete rule kernel.
+**Acceptance for the initial slice:** the existing normalization rule has positive, negative, tampering, wrong-input, and unsupported-expression tests. Transition records validate their data shape only; they do not constitute proof verification.
 
 ### M3 — Independent verification
 
 - Verify rule applications and side conditions.
 - Distinguish equivalence from one-way implication.
-- Add adversarial invalid-step tests.
+- Add adversarial invalid-step tests, including unsafe cancellation and sign-sensitive inequality changes.
 
-**Acceptance:** invalid transformations in the test suite are rejected for the intended reason.
+**Acceptance:** invalid transformations in the test suite are rejected for the intended reason by an independent checker.
 
 ### M4 — Symbolic search baseline
 
@@ -286,6 +286,6 @@ Open decisions for implementation include the Python version and packaging layou
 
 ## 11. Current status
 
-The initial M1 foundation now contains immutable nodes for rational constants, symbols, sums, products, and powers; explicit domain labels; symbol assumptions; and typed equations and inequalities. Unit tests cover basic construction invariants. These components are data structures only: they do not simplify expressions, apply algebraic transformations, establish equivalence, or prove the truth of assumptions.
+The initial M1 foundation contains immutable nodes for rational constants, symbols, sums, products, and powers; explicit domain labels; symbol assumptions; and typed equations and inequalities. The M2 foundation contains exact sparse polynomial normalization, one equation-to-zero normalization rule with a narrow recomputation checker, and generic immutable records for proof states and proposed transitions. The transition records make semantic direction explicit but do not verify it.
 
-The transformation kernel, parser/renderer, independent verifier, search engine, dataset, model, and training pipeline remain unimplemented and unevaluated. The next task is to specify and test the semantics of a small set of symbolic transformations. The geometry implementation remains untouched.
+These components do not yet provide a general proof verifier, parser, search engine, dataset, model, or training pipeline. The next task is to connect the existing normalization rule to the transition representation and build an independent checker with adversarial tests. The geometry implementation remains untouched.
