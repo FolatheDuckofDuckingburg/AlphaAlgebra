@@ -158,10 +158,14 @@ def verify_polynomial_equation_step(step: TransformationStep) -> bool:
     ):
         return False
     try:
-        expected = apply_polynomial_equation_to_zero(step.before)
+        source_equation = step.before.relations[0]
+        left = polynomial_from_expr(source_equation.left)
+        right = polynomial_from_expr(source_equation.right)
+        expected_residual = polynomial_difference(left, right)
+        expected_after = ProofState(
+            (Equation(_polynomial_to_expr(expected_residual), Rational(0)),),
+            step.before.assumptions,
+        )
     except (TypeError, ValueError, AttributeError):
         return False
-    return (
-        step.after == expected.after
-        and step.after.assumptions == step.before.assumptions
-    )
+    return step.after == expected_after
