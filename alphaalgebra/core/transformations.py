@@ -6,7 +6,9 @@ It does not solve equations or introduce division/cancellation rules.
 """
 from dataclasses import dataclass
 
+from .ast import Add, Expr, Multiply, Power, Rational, Symbol
 from .polynomial import Polynomial, polynomial_from_expr
+from .proof_state import ProofState, RelationSemantics, TransformationStep
 from .relations import Equation
 
 RULE_POLYNOMIAL_EQUATION_TO_ZERO = "polynomial_equation_to_zero"
@@ -60,6 +62,62 @@ def normalize_polynomial_equation(
     )
 
 
+def _polynomial_to_expr(polynomial: Polynomial) -> Expr:
+    """Build a canonical AST expression from an exact sparse polynomial."""
+    if not isinstance(polynomial, Polynomial):
+        raise TypeError("polynomial must be a Polynomial")
+
+    terms: list[Expr] = []
+    for monomial, coefficient in polynomial.terms:
+        factors: list[Expr] = []
+        if coefficient != 1 or not monomial:
+            factors.append(Rational(coefficient))
+        for name, exponent in monomial:
+            symbol = Symbol(name)
+            factors.append(
+                symbol if exponent == 1 else Power(symbol, Rational(exponent))
+            )
+        if not factors:
+            term: Expr = Rational(1)
+        elif len(factors) == 1:
+            term = factors[0]
+        else:
+            term = Multiply(tuple(factors))
+        terms.append(term)
+
+    if not terms:
+        return Rational(0)
+    if len(terms) == 1:
+        return terms[0]
+    return Add(tuple(terms))
+
+
+def apply_polynomial_equation_to_zero(state: ProofState) -> TransformationStep:
+    """Apply the polynomial equation-to-zero rule to a one-equation state.
+
+    The resulting state preserves the input assumptions. The rule is an
+    equivalence over the supported polynomial fragment and has no side
+    conditions because it uses only addition/subtraction, not division.
+    """
+    if not isinstance(state, ProofState):
+        raise TypeError("state must be a ProofState")
+    if len(state.relations) != 1 or not isinstance(state.relations[0], Equation):
+        raise ValueError("the rule requires a state containing exactly one equation")
+
+    normal_form = normalize_polynomial_equation(state.relations[0])
+    after = ProofState(
+        (Equation(_polynomial_to_expr(normal_form.residual), Rational(0)),),
+        state.assumptions,
+    )
+    return TransformationStep(
+        rule_id=RULE_POLYNOMIAL_EQUATION_TO_ZERO,
+        before=state,
+        after=after,
+        semantics=RelationSemantics.EQUIVALENCE,
+        side_conditions=(),
+    )
+
+
 def verify_polynomial_equation_normal_form(
     result: PolynomialEquationNormalForm,
 ) -> bool:
@@ -80,3 +138,34 @@ def verify_polynomial_equation_normal_form(
         and result.side_conditions == ()
         and result.residual == expected.residual
     )
+
+
+def verify_polynomial_equation_step(step: TransformationStep) -> bool:
+    """Independently recompute and verify this rule's complete state transition.
+
+    The checker accepts only the exact rule ID, equivalence semantics, empty
+    side-condition set, one-equation input/output states, and unchanged
+    assumptions. It does not verify other rules or general logical entailment.
+    """
+    if not isinstance(step, TransformationStep):
+        return False
+    if (
+        step.rule_id != RULE_POLYNOMIAL_EQUATION_TO_ZERO
+        or step.semantics is not RelationSemantics.EQUIVALENCE
+        or step.side_conditions != ()
+        or len(step.before.relations) != 1
+        or not isinstance(step.before.relations[0], Equation)
+    ):
+        return False
+    try:
+        source_equation = step.before.relations[0]
+        left = polynomial_from_expr(source_equation.left)
+        right = polynomial_from_expr(source_equation.right)
+        expected_residual = polynomial_difference(left, right)
+        expected_after = ProofState(
+            (Equation(_polynomial_to_expr(expected_residual), Rational(0)),),
+            step.before.assumptions,
+        )
+    except (TypeError, ValueError, AttributeError):
+        return False
+    return step.after == expected_after

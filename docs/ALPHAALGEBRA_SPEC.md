@@ -3,7 +3,7 @@
 **Status:** Initial implementation — typed core and transition-record foundation  
 **Project:** AlphaAlgebra  
 **Repository origin:** `google-deepmind/alphageometry`  
-**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, relation types, exact sparse polynomial normalization, one explicit polynomial-equation normalization rule, and immutable proof-state/transition records are implemented. A narrow checker recomputes the polynomial normalization rule only; it is not a general proof verifier. No parser, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
+**Implementation status:** A minimal immutable expression AST, explicit domain enum, symbol assumptions, relation types, exact sparse polynomial normalization, one explicit polynomial-equation normalization rule, and immutable proof-state/transition records are implemented. A narrow checker recomputes the polynomial normalization rule and its corresponding proof-state transition; it is not a general proof verifier. No parser, proof search, algebra solver, trained model, or training pipeline is claimed to exist.
 
 ## 1. Purpose
 
@@ -217,11 +217,11 @@ Report denominators, timeout policy, hardware, software versions, random seeds, 
 - [x] Give the rule an explicit name and record its equivalence semantics and empty side-condition set.
 - [x] Add a narrow checker that recomputes the normalized residual and rejects tampered results.
 - [x] Add immutable proof-state and transformation-step records with explicit rule IDs, side-condition metadata, and equivalence/implication direction labels.
-- [ ] Connect rule applications to the general transition record.
-- [ ] Verify transition semantics and side conditions independently.
+- [x] Connect the polynomial equation-to-zero rule to the general transition record.
+- [x] Independently recompute this rule's output state and enforce its equivalence semantics and empty side-condition set.
 - [ ] Expand to additional rules only after their preconditions and semantics are specified.
 
-**Acceptance for the initial slice:** the existing normalization rule has positive, negative, tampering, wrong-input, and unsupported-expression tests. Transition records validate their data shape only; they do not constitute proof verification.
+**Acceptance for this slice:** the normalization rule and its one-rule transition checker have positive, negative, tampering, wrong-input, and unsupported-expression tests. The transition checker is deliberately limited to this rule; it is not general proof verification.
 
 ### M3 — Independent verification
 
@@ -286,6 +286,6 @@ Open decisions for implementation include the Python version and packaging layou
 
 ## 11. Current status
 
-The initial M1 foundation contains immutable nodes for rational constants, symbols, sums, products, and powers; explicit domain labels; symbol assumptions; and typed equations and inequalities. The M2 foundation contains exact sparse polynomial normalization, one equation-to-zero normalization rule with a narrow recomputation checker, and generic immutable records for proof states and proposed transitions. The transition records make semantic direction explicit but do not verify it.
+The initial M1 foundation contains immutable nodes for rational constants, symbols, sums, products, and powers; explicit domain labels; symbol assumptions; and typed equations and inequalities. The M2 foundation contains exact sparse polynomial normalization, one equation-to-zero rule that emits a structured transition, and a narrow checker that independently recomputes the output state, enforces equivalence semantics, and rejects non-empty side conditions. Generic transition records still do not verify arbitrary rules or prove general logical entailment.
 
-These components do not yet provide a general proof verifier, parser, search engine, dataset, model, or training pipeline. The next task is to connect the existing normalization rule to the transition representation and build an independent checker with adversarial tests. The geometry implementation remains untouched.
+These components do not yet provide a general proof verifier, parser, search engine, dataset, model, or training pipeline. The next task is to extend verification to additional rule families, beginning with adversarial tests for unsafe cancellation and sign-sensitive inequality transformations. The geometry implementation remains untouched.

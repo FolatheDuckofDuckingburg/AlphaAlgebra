@@ -80,7 +80,7 @@ Run the foundation tests from the repository root:
 python -m unittest discover -s alphaalgebra/tests -v
 ```
 
-The tests exercise data-model invariants, exact polynomial normalization, and the initial polynomial-equation normal-form rule. Passing them does not establish general theorem-proving capability.
+The tests exercise data-model invariants, exact polynomial normalization, and the initial polynomial-equation rule plus its narrowly scoped proof-state transition checker. Passing them does not establish general theorem-proving capability.
 
 ## Roadmap
 
