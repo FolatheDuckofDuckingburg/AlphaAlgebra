@@ -88,6 +88,7 @@ class PolynomialEquationNormalizationTests(unittest.TestCase):
 class PolynomialEquationTransitionTests(unittest.TestCase):
     def setUp(self):
         self.x = Symbol("x")
+        self.y = Symbol("y")
         self.assumptions = Assumptions(positive=frozenset({"x"}))
         self.before = ProofState(
             (Equation(Add((self.x, Rational(1))), Multiply((Rational(2), self.x))),),
