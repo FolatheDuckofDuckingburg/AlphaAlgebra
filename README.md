@@ -53,6 +53,15 @@ alphaalgebra/
     proof_state.py
     relations.py
     transformations.py
+  rules/
+    base.py
+    polynomial.py
+    registry.py
+  verification/
+    verifier.py
+  search/
+    candidates.py
+    symbolic.py
   tests/
     test_assumptions.py
     test_ast.py
