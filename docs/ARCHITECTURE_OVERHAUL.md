@@ -233,7 +233,7 @@ The current `alphaalgebra/core` package already provides:
 Important limitations remain:
 
 - No parser or problem interface
-- No general transformation registry
+- Only an initial rule registry with one independently checked polynomial normalization rule; no broad rule library
 - No general-purpose proof verifier
 - No factorization, substitution, elimination, or inequality rule engine
 - No general algebra solver; an initial bounded symbolic search kernel now exists
