@@ -52,9 +52,16 @@ class RuleRegistry:
 
 def default_rule_registry() -> RuleRegistry:
     """Build a fresh registry with only independently checked initial rules."""
-    from alphaalgebra.core.transformations import verify_polynomial_equation_step
-    from .polynomial import PolynomialEquationToZeroRule
+    from alphaalgebra.core.transformations import (
+        verify_polynomial_equation_step,
+        verify_rational_quadratic_factorization_step,
+    )
+    from .polynomial import PolynomialEquationToZeroRule, RationalQuadraticFactorizationRule
 
     registry = RuleRegistry()
     registry.register(PolynomialEquationToZeroRule(), verify_polynomial_equation_step)
+    registry.register(
+        RationalQuadraticFactorizationRule(),
+        verify_rational_quadratic_factorization_step,
+    )
     return registry
