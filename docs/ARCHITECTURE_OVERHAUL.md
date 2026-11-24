@@ -233,10 +233,10 @@ The current `alphaalgebra/core` package already provides:
 Important limitations remain:
 
 - No parser or problem interface
-- No general transformation registry
+- Only an initial rule registry with one independently checked polynomial normalization rule; no broad rule library
 - No general-purpose proof verifier
-- No factorization, substitution, elimination, or inequality rule engine
-- No solver or proof search
+- Exact factorization is limited to univariate quadratics with rational roots; no general factorization, substitution, elimination, or inequality rule engine
+- No general algebra solver; an initial bounded symbolic search kernel now exists
 - No synthetic-data pipeline or learned model
 
 The transition records for unimplemented rules are metadata only. The existing checker must not be generalized by simply trusting rule names or descriptive side-condition strings.
@@ -255,12 +255,16 @@ The transition records for unimplemented rules are metadata only. The existing c
 
 ### M2 — Rule kernel and independent verifier
 - Introduce a rule protocol and registry.
-- Implement and independently verify core polynomial identities and safe equation transformations.
+- [x] Implement and independently verify polynomial equation-to-zero normalization and exact rational-root quadratic factorization.\n- [ ] Expand the rule library to polynomial identities, substitution, elimination, rational equations, and inequalities with explicit side conditions.
 - Add rational-domain and inequality precondition handling before enabling those rule families.
 
 ### M3 — Deterministic symbolic baseline
-- Implement candidate enumeration, duplicate detection, bounded search, and complete traces.
-- Measure baseline solve coverage and failure modes on generated problems.
+- [x] Implement deterministic candidate enumeration with independent verification before frontier insertion.
+- [x] Implement bounded breadth-first search with structural duplicate-state detection, depth/node budgets, explicit terminal statuses, and complete traces for solved paths.
+- [ ] Add broader rule families and a goal/problem interface suitable for multi-step Olympiad tasks.
+- [ ] Measure baseline solve coverage and failure modes on generated problems.
+
+The current implementation is an initial search kernel, not a capable Olympiad solver. Its default state key is structural (AST/proof-state representation), not mathematical equivalence modulo algebraic identities. It does not yet include a wall-clock budget, neural policy, or broad algebra rule library.
 
 ### M4 — Dataset and evaluation
 - Build provenance-aware synthetic trace generation.

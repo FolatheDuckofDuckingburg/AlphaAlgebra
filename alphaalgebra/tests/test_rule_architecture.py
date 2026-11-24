@@ -15,7 +15,7 @@ class RuleArchitectureTests(unittest.TestCase):
         self.registry = default_rule_registry()
 
     def test_default_registry_exposes_only_supported_rule(self):
-        self.assertEqual(self.registry.rule_ids, ("polynomial_equation_to_zero",))
+        self.assertEqual(self.registry.rule_ids, ("factor_rational_quadratic", "polynomial_equation_to_zero"))
 
     def test_rule_proposes_transition_and_verifier_accepts_it(self):
         rule = self.registry.get("polynomial_equation_to_zero")

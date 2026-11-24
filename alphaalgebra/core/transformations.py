@@ -169,3 +169,127 @@ def verify_polynomial_equation_step(step: TransformationStep) -> bool:
     except (TypeError, ValueError, AttributeError):
         return False
     return step.after == expected_after
+
+
+# Exact rational quadratic factorization. This deliberately supports only
+# univariate quadratics whose discriminant has an exact rational square root.
+RULE_FACTOR_RATIONAL_QUADRATIC = "factor_rational_quadratic"
+
+
+def _rational_square_root(value):
+    """Return the exact non-negative rational square root, or None."""
+    from math import isqrt
+    from fractions import Fraction
+
+    exact = Fraction(value)
+    if exact < 0:
+        return None
+    numerator_root = isqrt(exact.numerator)
+    denominator_root = isqrt(exact.denominator)
+    if numerator_root * numerator_root != exact.numerator:
+        return None
+    if denominator_root * denominator_root != exact.denominator:
+        return None
+    return Fraction(numerator_root, denominator_root)
+
+
+def factor_rational_quadratic(polynomial: Polynomial) -> Expr | None:
+    """Factor a univariate quadratic over Q when its roots are rational.
+
+    Returns an exact expression equivalent to the polynomial, or None when
+    the polynomial is outside this deliberately narrow factorization domain.
+    """
+    from fractions import Fraction
+
+    if not isinstance(polynomial, Polynomial):
+        raise TypeError("polynomial must be a Polynomial")
+
+    coefficients = {0: Fraction(0), 1: Fraction(0), 2: Fraction(0)}
+    variable = None
+    for monomial, coefficient in polynomial.terms:
+        if not monomial:
+            coefficients[0] += coefficient
+            continue
+        if len(monomial) != 1:
+            return None
+        name, exponent = monomial[0]
+        if exponent not in (1, 2):
+            return None
+        if variable is None:
+            variable = name
+        elif variable != name:
+            return None
+        coefficients[exponent] += coefficient
+
+    a, b, c = coefficients[2], coefficients[1], coefficients[0]
+    if not a or variable is None:
+        return None
+
+    discriminant_root = _rational_square_root(b * b - 4 * a * c)
+    if discriminant_root is None:
+        return None
+
+    root_one = (-b + discriminant_root) / (2 * a)
+    root_two = (-b - discriminant_root) / (2 * a)
+    symbol = Symbol(variable)
+
+    def linear_factor(root):
+        return symbol if root == 0 else Add((symbol, Rational(-root)))
+
+    factors: list[Expr] = [linear_factor(root_one), linear_factor(root_two)]
+    if a != 1:
+        factors.insert(0, Rational(a))
+    if len(factors) == 1:
+        return factors[0]
+    return Multiply(tuple(factors))
+
+
+def apply_rational_quadratic_factorization(
+    state: ProofState,
+) -> TransformationStep:
+    """Factor the polynomial residual of a one-equation state over Q."""
+    if not isinstance(state, ProofState):
+        raise TypeError("state must be a ProofState")
+    if len(state.relations) != 1 or not isinstance(state.relations[0], Equation):
+        raise ValueError("factorization requires exactly one equation")
+    normal_form = normalize_polynomial_equation(state.relations[0])
+    factored = factor_rational_quadratic(normal_form.residual)
+    if factored is None:
+        raise ValueError("equation residual is not a supported rational-root quadratic")
+    after = ProofState(
+        (Equation(factored, Rational(0)),),
+        state.assumptions,
+    )
+    return TransformationStep(
+        rule_id=RULE_FACTOR_RATIONAL_QUADRATIC,
+        before=state,
+        after=after,
+        semantics=RelationSemantics.EQUIVALENCE,
+        side_conditions=(),
+    )
+
+
+def verify_rational_quadratic_factorization_step(step: TransformationStep) -> bool:
+    """Independently recompute and check an exact rational quadratic factorization."""
+    if not isinstance(step, TransformationStep):
+        return False
+    if (
+        step.rule_id != RULE_FACTOR_RATIONAL_QUADRATIC
+        or step.semantics is not RelationSemantics.EQUIVALENCE
+        or step.side_conditions != ()
+        or len(step.before.relations) != 1
+        or not isinstance(step.before.relations[0], Equation)
+    ):
+        return False
+    try:
+        residual = normalize_polynomial_equation(step.before.relations[0]).residual
+        expected_expression = factor_rational_quadratic(residual)
+        if expected_expression is None:
+            return False
+        expected_after = ProofState(
+            (Equation(expected_expression, Rational(0)),),
+            step.before.assumptions,
+        )
+    except (TypeError, ValueError, AttributeError, ZeroDivisionError):
+        return False
+    return step.after == expected_after
