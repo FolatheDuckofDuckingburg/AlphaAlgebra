@@ -20,7 +20,7 @@ The initial research question is:
 
 > Can learned guidance improve the efficiency of symbolic algebra proof search while preserving independently verified correctness?
 
-The first priority is a reliable symbolic foundation. Neural guidance is optional and will only be considered after a symbolic baseline exists and an efficiency bottleneck has been measured.
+The architecture is hybrid from the outset: symbolic candidate generation and independent verification define the trusted core, while a neural policy is introduced only after a deterministic symbolic baseline exists and an efficiency bottleneck has been measured. This keeps the architecture neural-ready without making an untrained or unverified model part of the correctness boundary.
 
 ### Design principles
 
@@ -62,6 +62,7 @@ alphaalgebra/
     test_transformations.py
 docs/
   ALPHAALGEBRA_SPEC.md
+  ARCHITECTURE_OVERHAUL.md
   UPSTREAM_ALPHA_GEOMETRY_README.md
 .github/
   workflows/
@@ -91,7 +92,7 @@ The tests exercise data-model invariants, exact polynomial normalization, and th
 5. **Dataset and evaluation:** trace provenance, prevent template leakage, and report failures as well as successes.
 6. **Learned guidance experiment:** compare against the symbolic baseline without making the learned model the correctness authority.
 
-See [the technical specification](docs/ALPHAALGEBRA_SPEC.md) for the research question, scope, architecture, and evaluation plan.
+See the [technical specification](docs/ALPHAALGEBRA_SPEC.md) for the research question, scope, and evaluation plan, and the [architecture overhaul](docs/ARCHITECTURE_OVERHAUL.md) for the hybrid design, inherited-code audit, package boundaries, and milestones.
 
 ## Provenance and licensing
 
