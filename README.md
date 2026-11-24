@@ -4,7 +4,7 @@
 
 AlphaAlgebra explores how explicit mathematical representations, symbolic transformations, and independently checkable proof steps can support algebra problem solving. The initial target is olympiad-style algebra, developed incrementally from a small, testable formal core.
 
-> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. The AlphaAlgebra package includes typed expression and relation models, assumptions, exact sparse polynomial normalization, one narrowly scoped polynomial-equation normalization rule, and immutable proof-state/transition records. The existing recomputation checker covers that normalization rule only; the new transition records are descriptive data structures, not a general proof verifier. The project does not yet contain an algebra solver, proof search, trained model, or reported solving results.
+> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. The AlphaAlgebra package includes typed expression and relation models, assumptions, exact sparse polynomial normalization, one narrowly scoped polynomial-equation normalization rule, and immutable proof-state/transition records. The existing recomputation checker covers that normalization rule only; the new transition records are descriptive data structures, not a general proof verifier. The package now includes deterministic verified-candidate generation and a bounded breadth-first symbolic search baseline. This is not yet a general algebra solver; there is no trained model or reported solving benchmark.
 
 ## Relationship to AlphaGeometry
 
@@ -81,14 +81,14 @@ Run the foundation tests from the repository root:
 python -m unittest discover -s alphaalgebra/tests -v
 ```
 
-The tests exercise data-model invariants, exact polynomial normalization, and the initial polynomial-equation rule plus its narrowly scoped proof-state transition checker. Passing them does not establish general theorem-proving capability.
+The tests exercise data-model invariants, exact polynomial normalization, the initial polynomial-equation rule and its narrowly scoped transition checker, verified candidate generation, and bounded-search control flow. Passing them does not establish general theorem-proving capability.
 
 ## Roadmap
 
 1. **Formal core:** typed expressions, domains, assumptions, and relations.
 2. **Transformation kernel:** explicit rewrite rules with preconditions and side conditions.
 3. **Proof representation and verifier:** independently check each transformation and preserve constraints.
-4. **Symbolic baseline:** bounded, deterministic search with measurable resource limits.
+4. **Symbolic baseline:** bounded, deterministic search with measurable resource limits. The current baseline uses breadth-first traversal, structural state keys, duplicate suppression, verified transitions only, and explicit depth/node budgets.
 5. **Dataset and evaluation:** trace provenance, prevent template leakage, and report failures as well as successes.
 6. **Learned guidance experiment:** compare against the symbolic baseline without making the learned model the correctness authority.
 
