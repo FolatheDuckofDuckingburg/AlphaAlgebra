@@ -236,7 +236,7 @@ Important limitations remain:
 - No general transformation registry
 - No general-purpose proof verifier
 - No factorization, substitution, elimination, or inequality rule engine
-- No solver or proof search
+- No general algebra solver; an initial bounded symbolic search kernel now exists
 - No synthetic-data pipeline or learned model
 
 The transition records for unimplemented rules are metadata only. The existing checker must not be generalized by simply trusting rule names or descriptive side-condition strings.
@@ -259,8 +259,12 @@ The transition records for unimplemented rules are metadata only. The existing c
 - Add rational-domain and inequality precondition handling before enabling those rule families.
 
 ### M3 — Deterministic symbolic baseline
-- Implement candidate enumeration, duplicate detection, bounded search, and complete traces.
-- Measure baseline solve coverage and failure modes on generated problems.
+- [x] Implement deterministic candidate enumeration with independent verification before frontier insertion.
+- [x] Implement bounded breadth-first search with structural duplicate-state detection, depth/node budgets, explicit terminal statuses, and complete traces for solved paths.
+- [ ] Add broader rule families and a goal/problem interface suitable for multi-step Olympiad tasks.
+- [ ] Measure baseline solve coverage and failure modes on generated problems.
+
+The current implementation is an initial search kernel, not a capable Olympiad solver. Its default state key is structural (AST/proof-state representation), not mathematical equivalence modulo algebraic identities. It does not yet include a wall-clock budget, neural policy, or broad algebra rule library.
 
 ### M4 — Dataset and evaluation
 - Build provenance-aware synthetic trace generation.
