@@ -235,7 +235,7 @@ Important limitations remain:
 - No parser or problem interface
 - Only an initial rule registry with one independently checked polynomial normalization rule; no broad rule library
 - No general-purpose proof verifier
-- No factorization, substitution, elimination, or inequality rule engine
+- Exact factorization is limited to univariate quadratics with rational roots; no general factorization, substitution, elimination, or inequality rule engine
 - No general algebra solver; an initial bounded symbolic search kernel now exists
 - No synthetic-data pipeline or learned model
 
@@ -255,7 +255,7 @@ The transition records for unimplemented rules are metadata only. The existing c
 
 ### M2 — Rule kernel and independent verifier
 - Introduce a rule protocol and registry.
-- Implement and independently verify core polynomial identities and safe equation transformations.
+- [x] Implement and independently verify polynomial equation-to-zero normalization and exact rational-root quadratic factorization.\n- [ ] Expand the rule library to polynomial identities, substitution, elimination, rational equations, and inequalities with explicit side conditions.
 - Add rational-domain and inequality precondition handling before enabling those rule families.
 
 ### M3 — Deterministic symbolic baseline
