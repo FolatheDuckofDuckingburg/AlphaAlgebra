@@ -60,7 +60,7 @@ class RationalQuadraticFactorizationTests(unittest.TestCase):
         expected = Multiply((
             Rational(2),
             Add((self.x, Rational(-2))),
-            Add((self.x, Rational(Fraction(1, 2)))),
+            Add((self.x, Rational(Fraction(-1, 2)))),
         ))
         self.assertEqual(step.after.relations[0], Equation(expected, Rational(0)))
 
