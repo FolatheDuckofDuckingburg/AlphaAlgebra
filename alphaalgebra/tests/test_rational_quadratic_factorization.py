@@ -14,6 +14,7 @@ from alphaalgebra.core.transformations import (
 from alphaalgebra.core.polynomial import Polynomial
 from alphaalgebra.rules import RationalQuadraticFactorizationRule, default_rule_registry
 from alphaalgebra.verification import verify_step
+from alphaalgebra.search import SearchStatus, bounded_symbolic_search
 
 
 class RationalQuadraticFactorizationTests(unittest.TestCase):
@@ -97,6 +98,25 @@ class RationalQuadraticFactorizationTests(unittest.TestCase):
         self.assertIsInstance(rule, RationalQuadraticFactorizationRule)
         proposal = rule.apply(self.state_for())
         self.assertTrue(verify_step(proposal, registry).valid)
+
+
+    def test_bounded_search_can_reach_factored_form(self):
+        result = bounded_symbolic_search(
+            self.state_for(),
+            lambda state: (
+                isinstance(state.relations[0], Equation)
+                and isinstance(state.relations[0].left, Multiply)
+            ),
+            default_rule_registry(),
+            max_depth=1,
+            max_expanded_nodes=10,
+        )
+        self.assertEqual(result.status, SearchStatus.SOLVED)
+        self.assertEqual(len(result.proof), 1)
+        self.assertEqual(
+            result.proof[0].rule_id,
+            RULE_FACTOR_RATIONAL_QUADRATIC,
+        )
 
     def test_rational_square_root_requires_exact_square(self):
         self.assertIsNone(factor_rational_quadratic(Polynomial((
