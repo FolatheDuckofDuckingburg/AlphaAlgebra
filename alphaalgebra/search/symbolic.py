@@ -72,7 +72,7 @@ def bounded_symbolic_search(
     for name, value in (("max_depth", max_depth), ("max_expanded_nodes", max_expanded_nodes)):
         if isinstance(value, bool) or not isinstance(value, int) or value < 0:
             raise ValueError(f"{name} must be a non-negative integer")
-    key_fn = state_key or _default_state_key
+    key_fn = _default_state_key if state_key is None else state_key
     if not callable(key_fn):
         raise TypeError("state_key must be callable")
 
@@ -119,9 +119,6 @@ def bounded_symbolic_search(
                 hash(next_key)
             except TypeError as exc:
                 raise TypeError("state_key must return a hashable value") from exc
-            if next_key in seen:
-                continue
-            seen.add(next_key)
             next_path = path + (step,)
             next_depth = depth + 1
             deepest = max(deepest, next_depth)
@@ -130,10 +127,13 @@ def bounded_symbolic_search(
                     SearchStatus.SOLVED,
                     next_path,
                     expanded,
-                    len(seen),
+                    len(seen) + (0 if next_key in seen else 1),
                     deepest,
                     tuple(rejected),
                 )
+            if next_key in seen:
+                continue
+            seen.add(next_key)
             frontier.append((next_state, next_path, next_depth))
 
     status = SearchStatus.DEPTH_LIMIT_REACHED if depth_limited else SearchStatus.FRONTIER_EXHAUSTED
