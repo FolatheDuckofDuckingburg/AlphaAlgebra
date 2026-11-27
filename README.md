@@ -97,7 +97,7 @@ The tests exercise data-model invariants, exact polynomial normalization, indepe
 1. **Formal core:** typed expressions, domains, assumptions, and relations.
 2. **Transformation kernel:** explicit rewrite rules with preconditions and side conditions.
 3. **Proof representation and verifier:** independently check each transformation and preserve constraints.
-4. **Symbolic baseline:** bounded, deterministic search with measurable resource limits. The current baseline uses breadth-first traversal, structural state keys, duplicate suppression, verified transitions only, and explicit depth/node budgets.
+4. **Symbolic baseline:** bounded, deterministic search with measurable resource limits. The current baseline uses breadth-first traversal, structural state keys, duplicate suppression, verified transitions only, and explicit depth/node budgets and an optional cooperative wall-clock budget.
 5. **Dataset and evaluation:** trace provenance, prevent template leakage, and report failures as well as successes.
 6. **Learned guidance experiment:** compare against the symbolic baseline without making the learned model the correctness authority.
 

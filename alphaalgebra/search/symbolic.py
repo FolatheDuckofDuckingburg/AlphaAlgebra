@@ -3,11 +3,13 @@
 from collections import deque
 from dataclasses import dataclass
 from enum import Enum
+from math import isfinite
+from time import monotonic
 from typing import Callable, Hashable
 
 from alphaalgebra.core.proof_state import ProofState, TransformationStep
-from alphaalgebra.rules.registry import RuleRegistry
 from alphaalgebra.problem.goals import Goal
+from alphaalgebra.rules.registry import RuleRegistry
 from .candidates import CandidateRejection, generate_candidates
 
 
@@ -18,6 +20,7 @@ class SearchStatus(str, Enum):
     FRONTIER_EXHAUSTED = "frontier_exhausted"
     DEPTH_LIMIT_REACHED = "depth_limit_reached"
     NODE_BUDGET_EXHAUSTED = "node_budget_exhausted"
+    TIME_LIMIT_REACHED = "time_limit_reached"
 
 
 @dataclass(frozen=True, slots=True)
@@ -52,17 +55,20 @@ def bounded_symbolic_search(
     *,
     max_depth: int = 8,
     max_expanded_nodes: int = 1_000,
+    max_seconds: float | None = None,
     state_key: StateKey | None = None,
 ) -> SearchResult:
     """Run deterministic breadth-first search using only verified transitions.
 
     Every edge is produced by generate_candidates, which checks source-state
-    identity and invokes the registry's independent checker. The goal predicate
-    is supplied by the caller; this function does not infer mathematical goals.
+    identity and invokes the registry's independent checker. The goal may be a
+    typed Goal object or a legacy callable predicate.
 
     max_depth counts transitions from the initial state. The node budget counts
-    states for which candidate generation is attempted. Search is not complete
-    beyond the supplied limits, and no theorem-solving completeness is claimed.
+    states for which candidate generation is attempted. max_seconds is a
+    cooperative wall-clock budget checked between expansions and candidate
+    processing; it cannot interrupt a single rule application. Search is
+    incomplete beyond any supplied limit.
     """
     if not isinstance(initial_state, ProofState):
         raise TypeError("initial_state must be a ProofState")
@@ -77,6 +83,16 @@ def bounded_symbolic_search(
     for name, value in (("max_depth", max_depth), ("max_expanded_nodes", max_expanded_nodes)):
         if isinstance(value, bool) or not isinstance(value, int) or value < 0:
             raise ValueError(f"{name} must be a non-negative integer")
+    if max_seconds is not None:
+        if (
+            isinstance(max_seconds, bool)
+            or not isinstance(max_seconds, (int, float))
+            or not isfinite(max_seconds)
+            or max_seconds < 0
+        ):
+            raise ValueError("max_seconds must be a finite non-negative number or None")
+
+    started_at = monotonic()
     key_fn = _default_state_key if state_key is None else state_key
     if not callable(key_fn):
         raise TypeError("state_key must be callable")
@@ -97,6 +113,15 @@ def bounded_symbolic_search(
     rejected: list[CandidateRejection] = []
 
     while frontier:
+        if max_seconds is not None and monotonic() - started_at >= max_seconds:
+            return SearchResult(
+                SearchStatus.TIME_LIMIT_REACHED,
+                (),
+                expanded,
+                len(seen),
+                deepest,
+                tuple(rejected),
+            )
         state, path, depth = frontier.popleft()
         deepest = max(deepest, depth)
 
@@ -116,8 +141,26 @@ def bounded_symbolic_search(
         expanded += 1
         generated = generate_candidates(state, registry)
         rejected.extend(generated.rejected)
+        if max_seconds is not None and monotonic() - started_at >= max_seconds:
+            return SearchResult(
+                SearchStatus.TIME_LIMIT_REACHED,
+                (),
+                expanded,
+                len(seen),
+                deepest,
+                tuple(rejected),
+            )
 
         for step in generated.candidates:
+            if max_seconds is not None and monotonic() - started_at >= max_seconds:
+                return SearchResult(
+                    SearchStatus.TIME_LIMIT_REACHED,
+                    (),
+                    expanded,
+                    len(seen),
+                    deepest,
+                    tuple(rejected),
+                )
             next_state = step.after
             next_key = key_fn(next_state)
             try:
