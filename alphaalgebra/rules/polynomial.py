@@ -61,3 +61,31 @@ class RationalQuadraticFactorizationRule:
             raise ValueError("state is not applicable to rational quadratic factorization")
         from alphaalgebra.core.transformations import apply_rational_quadratic_factorization
         return apply_rational_quadratic_factorization(state)
+
+
+class LinearEquationSolvingRule:
+    """Solve one univariate linear polynomial equation exactly."""
+
+    from alphaalgebra.core.transformations import RULE_SOLVE_LINEAR_EQUATION as rule_id
+    version = "1.0.0"
+
+    def is_applicable(self, state: ProofState) -> bool:
+        if not isinstance(state, ProofState) or len(state.relations) != 1:
+            return False
+        if not isinstance(state.relations[0], Equation):
+            return False
+        try:
+            from alphaalgebra.core.transformations import (
+                normalize_polynomial_equation,
+                solve_linear_equation_residual,
+            )
+            residual = normalize_polynomial_equation(state.relations[0]).residual
+            return solve_linear_equation_residual(residual) is not None
+        except (TypeError, ValueError):
+            return False
+
+    def apply(self, state: ProofState) -> TransformationStep:
+        if not self.is_applicable(state):
+            raise ValueError("state is not applicable to linear equation solving")
+        from alphaalgebra.core.transformations import apply_linear_equation_solution
+        return apply_linear_equation_solution(state)
