@@ -5,6 +5,7 @@ equivalence-preserving normalization over the supported polynomial fragment.
 It does not solve equations or introduce division/cancellation rules.
 """
 from dataclasses import dataclass
+from fractions import Fraction
 
 from .ast import Add, Expr, Multiply, Power, Rational, Symbol
 from .polynomial import Polynomial, polynomial_from_expr
