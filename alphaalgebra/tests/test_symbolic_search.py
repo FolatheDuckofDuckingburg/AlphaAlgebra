@@ -66,6 +66,37 @@ class BoundedSymbolicSearchTests(unittest.TestCase):
                 self.initial, lambda state: False, self.registry, max_depth=-1
             )
 
+
+    def test_wall_clock_budget_reports_time_limit(self):
+        result = bounded_symbolic_search(
+            self.initial,
+            lambda state: False,
+            self.registry,
+            max_seconds=0,
+        )
+        self.assertEqual(result.status, SearchStatus.TIME_LIMIT_REACHED)
+        self.assertEqual(result.expanded_nodes, 0)
+
+    def test_initial_goal_is_checked_before_zero_time_budget(self):
+        result = bounded_symbolic_search(
+            self.initial,
+            lambda state: state == self.initial,
+            self.registry,
+            max_seconds=0,
+        )
+        self.assertEqual(result.status, SearchStatus.SOLVED)
+
+    def test_invalid_wall_clock_budgets_are_rejected(self):
+        for value in (-1, float("inf"), float("nan"), True, "1"):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    bounded_symbolic_search(
+                        self.initial,
+                        lambda state: False,
+                        self.registry,
+                        max_seconds=value,
+                    )
+
     def test_non_callable_goal_is_rejected(self):
         with self.assertRaises(TypeError):
             bounded_symbolic_search(self.initial, None, self.registry)
