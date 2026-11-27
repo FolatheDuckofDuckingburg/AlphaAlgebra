@@ -232,7 +232,7 @@ The current `alphaalgebra/core` package already provides:
 
 Important limitations remain:
 
-- No parser or problem interface
+- No natural-language parser; a typed exact linear-equation goal interface exists
 - An initial rule registry with independently checked polynomial normalization, rational-root quadratic factorization, and univariate linear equation solving; no broad rule library
 - No general-purpose proof verifier
 - Exact factorization is limited to univariate quadratics with rational roots; linear solving is limited to univariate degree-one polynomial equations. No substitution, elimination, rational-equation, or inequality rule engine exists
@@ -261,10 +261,10 @@ The transition records for unimplemented rules are metadata only. The existing c
 ### M3 — Deterministic symbolic baseline
 - [x] Implement deterministic candidate enumeration with independent verification before frontier insertion.
 - [x] Implement bounded breadth-first search with structural duplicate-state detection, depth/node budgets, explicit terminal statuses, and complete traces for solved paths.
-- [ ] Add broader rule families and a goal/problem interface suitable for multi-step Olympiad tasks.
+- [x] Add a typed exact equation-solution goal and allow bounded search to consume it.\n- [x] Add an opt-in canonical key for supported polynomial equation states, preserving assumptions.\n- [x] Add a cooperative monotonic wall-clock budget and a distinct time-limit status.\n- [ ] Extend typed goals to identities, inequalities, systems, and multi-part Olympiad objectives.
 - [ ] Measure baseline solve coverage and failure modes on generated problems.
 
-The current implementation is an initial search kernel, not a capable Olympiad solver. Its default state key is structural (AST/proof-state representation), not mathematical equivalence modulo algebraic identities. It does not yet include a wall-clock budget, neural policy, or broad algebra rule library.
+The current implementation is an initial search kernel, not a capable Olympiad solver. Its default state key is structural (AST/proof-state representation), not mathematical equivalence modulo algebraic identities. The search accepts a cooperative wall-clock budget but cannot interrupt a single long-running rule/checker. Neural policy and a broad algebra rule library remain future work.
 
 ### M4 — Dataset and evaluation
 - Build provenance-aware synthetic trace generation.
