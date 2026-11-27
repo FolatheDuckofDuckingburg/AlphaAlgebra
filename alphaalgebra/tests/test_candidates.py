@@ -17,8 +17,11 @@ class CandidateGenerationTests(unittest.TestCase):
 
     def test_only_verified_candidates_are_returned(self):
         generated = generate_candidates(self.state, self.registry)
-        self.assertEqual(len(generated.candidates), 1)
-        self.assertEqual(generated.candidates[0].before, self.state)
+        self.assertEqual(
+            {step.rule_id for step in generated.candidates},
+            {"polynomial_equation_to_zero", "solve_linear_equation"},
+        )
+        self.assertTrue(all(step.before == self.state for step in generated.candidates))
         self.assertEqual(generated.rejected, ())
 
     def test_non_applicable_state_has_no_candidates(self):
