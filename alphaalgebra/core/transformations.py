@@ -5,6 +5,7 @@ equivalence-preserving normalization over the supported polynomial fragment.
 It does not solve equations or introduce division/cancellation rules.
 """
 from dataclasses import dataclass
+from fractions import Fraction
 
 from .ast import Add, Expr, Multiply, Power, Rational, Symbol
 from .polynomial import Polynomial, polynomial_from_expr
@@ -293,3 +294,81 @@ def verify_rational_quadratic_factorization_step(step: TransformationStep) -> bo
     except (TypeError, ValueError, AttributeError, ZeroDivisionError):
         return False
     return step.after == expected_after
+
+
+# Exact solution of a univariate linear polynomial equation over Q.
+RULE_SOLVE_LINEAR_EQUATION = "solve_linear_equation"
+
+
+def solve_linear_equation_residual(polynomial: Polynomial) -> tuple[str, Fraction] | None:
+    """Return (variable, exact solution) for a non-constant univariate linear residual."""
+    from fractions import Fraction
+
+    if not isinstance(polynomial, Polynomial):
+        raise TypeError("polynomial must be a Polynomial")
+    coefficient = Fraction(0)
+    constant = Fraction(0)
+    variable = None
+    for monomial, value in polynomial.terms:
+        if not monomial:
+            constant += value
+            continue
+        if len(monomial) != 1 or monomial[0][1] != 1:
+            return None
+        name = monomial[0][0]
+        if variable is None:
+            variable = name
+        elif variable != name:
+            return None
+        coefficient += value
+    if variable is None or coefficient == 0:
+        return None
+    return variable, -constant / coefficient
+
+
+def apply_linear_equation_solution(state: ProofState) -> TransformationStep:
+    """Solve one univariate linear polynomial equation exactly over Q."""
+    if not isinstance(state, ProofState):
+        raise TypeError("state must be a ProofState")
+    if len(state.relations) != 1 or not isinstance(state.relations[0], Equation):
+        raise ValueError("linear solving requires exactly one equation")
+    residual = normalize_polynomial_equation(state.relations[0]).residual
+    solution = solve_linear_equation_residual(residual)
+    if solution is None:
+        raise ValueError("equation is not a supported non-constant univariate linear equation")
+    variable, value = solution
+    after = ProofState((Equation(Symbol(variable), Rational(value)),), state.assumptions)
+    return TransformationStep(
+        rule_id=RULE_SOLVE_LINEAR_EQUATION,
+        before=state,
+        after=after,
+        semantics=RelationSemantics.EQUIVALENCE,
+        side_conditions=(),
+    )
+
+
+def verify_linear_equation_solution_step(step: TransformationStep) -> bool:
+    """Recompute the exact linear solution and reject altered outputs."""
+    if not isinstance(step, TransformationStep):
+        return False
+    if (
+        step.rule_id != RULE_SOLVE_LINEAR_EQUATION
+        or step.semantics is not RelationSemantics.EQUIVALENCE
+        or step.side_conditions != ()
+        or len(step.before.relations) != 1
+        or not isinstance(step.before.relations[0], Equation)
+    ):
+        return False
+    try:
+        residual = normalize_polynomial_equation(step.before.relations[0]).residual
+        solution = solve_linear_equation_residual(residual)
+        if solution is None:
+            return False
+        variable, value = solution
+        expected = ProofState(
+            (Equation(Symbol(variable), Rational(value)),),
+            step.before.assumptions,
+        )
+    except (TypeError, ValueError, AttributeError, ZeroDivisionError):
+        return False
+    return step.after == expected
