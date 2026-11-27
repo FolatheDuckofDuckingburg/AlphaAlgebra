@@ -4,7 +4,7 @@
 
 AlphaAlgebra explores how explicit mathematical representations, symbolic transformations, and independently checkable proof steps can support algebra problem solving. The initial target is olympiad-style algebra, developed incrementally from a small, testable formal core.
 
-> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. The AlphaAlgebra package includes typed expression and relation models, assumptions, exact sparse polynomial normalization, a polynomial-equation normalization rule, exact rational-root quadratic factorization, and exact univariate linear-equation solving, each with a rule-specific recomputation checker. The transition records remain descriptive data structures outside these registered, narrowly scoped rules; this is not a general proof verifier. The package now includes deterministic verified-candidate generation and a bounded breadth-first symbolic search baseline. This is not yet a general algebra solver; there is no trained model or reported solving benchmark.
+> **Project status:** early foundations. The repository currently contains the inherited AlphaGeometry codebase and an initial AlphaAlgebra specification. The AlphaAlgebra package includes typed expression and relation models, assumptions, exact sparse polynomial normalization, a polynomial-equation normalization rule, exact rational-root quadratic factorization, and exact univariate linear-equation solving, each with a rule-specific recomputation checker. It also includes typed exact equation-solution goals, an opt-in conservative canonical polynomial state key, and a cooperative wall-clock budget for bounded search. The transition records remain descriptive data structures outside these registered, narrowly scoped rules; this is not a general proof verifier. The package now includes deterministic verified-candidate generation and a bounded breadth-first symbolic search baseline. This is not yet a general algebra solver; there is no trained model or reported solving benchmark.
 
 ## Relationship to AlphaGeometry
 
@@ -90,14 +90,14 @@ Run the foundation tests from the repository root:
 python -m unittest discover -s alphaalgebra/tests -v
 ```
 
-The tests exercise data-model invariants, exact polynomial normalization, independently checked polynomial-equation normalization and rational-root quadratic factorization, exact linear equation solving, verified candidate generation, and bounded-search control flow. Passing them does not establish general theorem-proving capability.
+The tests exercise data-model invariants, exact polynomial normalization, independently checked polynomial-equation normalization and rational-root quadratic factorization, exact linear equation solving, verified candidate generation, typed goals, canonical state keys, and bounded-search control flow. Passing them does not establish general theorem-proving capability.
 
 ## Roadmap
 
 1. **Formal core:** typed expressions, domains, assumptions, and relations.
 2. **Transformation kernel:** explicit rewrite rules with preconditions and side conditions.
 3. **Proof representation and verifier:** independently check each transformation and preserve constraints.
-4. **Symbolic baseline:** bounded, deterministic search with measurable resource limits. The current baseline uses breadth-first traversal, structural state keys, duplicate suppression, verified transitions only, and explicit depth/node budgets.
+4. **Symbolic baseline:** bounded, deterministic search with measurable resource limits. The current baseline uses breadth-first traversal, structural state keys, duplicate suppression, verified transitions only, and explicit depth/node budgets and an optional cooperative wall-clock budget.
 5. **Dataset and evaluation:** trace provenance, prevent template leakage, and report failures as well as successes.
 6. **Learned guidance experiment:** compare against the symbolic baseline without making the learned model the correctness authority.
 
