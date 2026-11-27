@@ -90,7 +90,7 @@ Run the foundation tests from the repository root:
 python -m unittest discover -s alphaalgebra/tests -v
 ```
 
-The tests exercise data-model invariants, exact polynomial normalization, independently checked polynomial-equation normalization and rational-root quadratic factorization, exact linear equation solving, verified candidate generation, typed equation-solution goals, verified candidate generation, and bounded-search control flow. Passing them does not establish general theorem-proving capability.
+The tests exercise data-model invariants, exact polynomial normalization, independently checked polynomial-equation normalization and rational-root quadratic factorization, exact linear equation solving, verified candidate generation, typed equation-solution goals, an opt-in canonical polynomial state key, verified candidate generation, and bounded-search control flow. Passing them does not establish general theorem-proving capability.
 
 ## Roadmap
 

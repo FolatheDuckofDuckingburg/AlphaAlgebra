@@ -261,10 +261,10 @@ The transition records for unimplemented rules are metadata only. The existing c
 ### M3 — Deterministic symbolic baseline
 - [x] Implement deterministic candidate enumeration with independent verification before frontier insertion.
 - [x] Implement bounded breadth-first search with structural duplicate-state detection, depth/node budgets, explicit terminal statuses, and complete traces for solved paths.
-- [x] Add a typed exact equation-solution goal and allow bounded search to consume it.\n- [ ] Extend typed goals to identities, inequalities, systems, and multi-part Olympiad objectives.
+- [x] Add a typed exact equation-solution goal and allow bounded search to consume it.\n- [x] Add an opt-in canonical key for supported polynomial equation states, preserving assumptions.\n- [ ] Extend typed goals to identities, inequalities, systems, and multi-part Olympiad objectives.
 - [ ] Measure baseline solve coverage and failure modes on generated problems.
 
-The current implementation is an initial search kernel, not a capable Olympiad solver. Its default state key is structural (AST/proof-state representation), not mathematical equivalence modulo algebraic identities. It does not yet include a wall-clock budget, neural policy, or broad algebra rule library.
+The current implementation is an initial search kernel, not a capable Olympiad solver. Its default state key remains structural. An opt-in canonical polynomial key normalizes supported equation syntax to an exact residual and includes assumptions; it does not identify scalar multiples or establish full mathematical equivalence. It does not yet include a wall-clock budget, neural policy, or broad algebra rule library.
 
 ### M4 — Dataset and evaluation
 - Build provenance-aware synthetic trace generation.
