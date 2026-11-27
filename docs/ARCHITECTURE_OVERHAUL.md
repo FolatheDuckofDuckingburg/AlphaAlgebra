@@ -233,9 +233,9 @@ The current `alphaalgebra/core` package already provides:
 Important limitations remain:
 
 - No parser or problem interface
-- Only an initial rule registry with one independently checked polynomial normalization rule; no broad rule library
+- An initial rule registry with independently checked polynomial normalization, rational-root quadratic factorization, and univariate linear equation solving; no broad rule library
 - No general-purpose proof verifier
-- Exact factorization is limited to univariate quadratics with rational roots; no general factorization, substitution, elimination, or inequality rule engine
+- Exact factorization is limited to univariate quadratics with rational roots; linear solving is limited to univariate degree-one polynomial equations. No substitution, elimination, rational-equation, or inequality rule engine exists
 - No general algebra solver; an initial bounded symbolic search kernel now exists
 - No synthetic-data pipeline or learned model
 
