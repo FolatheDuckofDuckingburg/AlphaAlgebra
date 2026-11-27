@@ -7,6 +7,7 @@ from typing import Callable, Hashable
 
 from alphaalgebra.core.proof_state import ProofState, TransformationStep
 from alphaalgebra.rules.registry import RuleRegistry
+from alphaalgebra.problem.goals import Goal
 from .candidates import CandidateRejection, generate_candidates
 
 
@@ -46,7 +47,7 @@ def _default_state_key(state: ProofState) -> str:
 
 def bounded_symbolic_search(
     initial_state: ProofState,
-    goal: GoalPredicate,
+    goal: Goal | GoalPredicate,
     registry: RuleRegistry,
     *,
     max_depth: int = 8,
@@ -65,8 +66,12 @@ def bounded_symbolic_search(
     """
     if not isinstance(initial_state, ProofState):
         raise TypeError("initial_state must be a ProofState")
-    if not callable(goal):
-        raise TypeError("goal must be callable")
+    if callable(goal):
+        goal_fn = goal
+    elif callable(getattr(goal, "is_satisfied", None)):
+        goal_fn = goal.is_satisfied
+    else:
+        raise TypeError("goal must be callable or implement is_satisfied(state)")
     if not isinstance(registry, RuleRegistry):
         raise TypeError("registry must be a RuleRegistry")
     for name, value in (("max_depth", max_depth), ("max_expanded_nodes", max_expanded_nodes)):
@@ -81,7 +86,7 @@ def bounded_symbolic_search(
         hash(initial_key)
     except TypeError as exc:
         raise TypeError("state_key must return a hashable value") from exc
-    if goal(initial_state):
+    if goal_fn(initial_state):
         return SearchResult(SearchStatus.SOLVED, (), 0, 1, 0, ())
 
     frontier = deque([(initial_state, (), 0)])
@@ -122,7 +127,7 @@ def bounded_symbolic_search(
             next_path = path + (step,)
             next_depth = depth + 1
             deepest = max(deepest, next_depth)
-            if goal(next_state):
+            if goal_fn(next_state):
                 return SearchResult(
                     SearchStatus.SOLVED,
                     next_path,
