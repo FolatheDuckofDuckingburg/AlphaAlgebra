@@ -255,13 +255,17 @@ The transition records for unimplemented rules are metadata only. The existing c
 
 ### M2 — Rule kernel and independent verifier
 - Introduce a rule protocol and registry.
-- [x] Implement and independently verify polynomial equation-to-zero normalization and exact rational-root quadratic factorization.\n- [ ] Expand the rule library to polynomial identities, substitution, elimination, rational equations, and inequalities with explicit side conditions.
+- [x] Implement and independently verify polynomial equation-to-zero normalization and exact rational-root quadratic factorization.
+- [ ] Expand the rule library to polynomial identities, substitution, elimination, rational equations, and inequalities with explicit side conditions.
 - Add rational-domain and inequality precondition handling before enabling those rule families.
 
 ### M3 — Deterministic symbolic baseline
 - [x] Implement deterministic candidate enumeration with independent verification before frontier insertion.
 - [x] Implement bounded breadth-first search with structural duplicate-state detection, depth/node budgets, explicit terminal statuses, and complete traces for solved paths.
-- [x] Add a typed exact equation-solution goal and allow bounded search to consume it.\n- [x] Add an opt-in canonical key for supported polynomial equation states, preserving assumptions.\n- [x] Add a cooperative monotonic wall-clock budget and a distinct time-limit status.\n- [ ] Extend typed goals to identities, inequalities, systems, and multi-part Olympiad objectives.
+- [x] Add a typed exact equation-solution goal and allow bounded search to consume it.
+- [x] Add an opt-in canonical key for supported polynomial equation states, preserving assumptions.
+- [x] Add a cooperative monotonic wall-clock budget and a distinct time-limit status.
+- [ ] Extend typed goals to identities, inequalities, systems, and multi-part Olympiad objectives.
 - [ ] Measure baseline solve coverage and failure modes on generated problems.
 
 The current implementation is an initial search kernel, not a capable Olympiad solver. Its default state key remains structural. An opt-in canonical polynomial key normalizes supported equation syntax to an exact residual and includes assumptions; it does not identify scalar multiples or establish full mathematical equivalence. The search now accepts a cooperative wall-clock budget and reports time-limit exhaustion, but cannot interrupt a single long-running rule application. Neural policy and a broad algebra rule library remain future work.
